@@ -6,13 +6,15 @@ services:
       context: .
       dockerfile: docker/Dockerfile.mlflow
     ports:
-      - "${MLFLOW_PORT:-5000}:5000"  # Use env variable with fallback
+      - "${MLFLOW_PORT:-5000}:5000"  # Maps HOST_PORT:CONTAINER_PORT
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000  # Use Docker service name internally
     volumes:
       - ~/mlflow:/mlflow
-    environment:
-      - MLFLOW_TRACKING_URI=http://localhost:5000
     networks:
       - mlflow-network
+    # Explicitly bind to all interfaces
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri /mlflow/mlruns --default-artifact-root file:///mlflow/artifacts
 
   training:
     build:
@@ -22,7 +24,7 @@ services:
       - ./:/app
       - ~/mlflow:/mlflow
     environment:
-      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_TRACKING_URI=http://mlflow:5000  # Use Docker service name
     depends_on:
       - mlflow
     networks:
