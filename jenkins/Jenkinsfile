@@ -16,7 +16,7 @@ pipeline {
         
         stage('Run Tests') {
             steps {
-                sh 'docker-compose run training pytest tests/'
+                sh 'docker-compose run -e PYTHONPATH=/app training pytest tests/'
             }
         }
         
