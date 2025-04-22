@@ -3,10 +3,11 @@ import numpy as np
 import os
 import mlflow
 import mlflow.sklearn
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import time
+import joblib
 
 def train_model():
     print("Training model...")
@@ -38,9 +39,11 @@ def train_model():
         # Log model parameters
         mlflow.log_param("model_type", "RandomForestClassifier")
         mlflow.log_param("n_estimators", 100)
+        mlflow.log_param("random_state", 42)
         
         # Make predictions
         y_pred = model.predict(X_test)
+        y_prob = model.predict_proba(X_test)[:, 1]
         
         # Calculate metrics
         accuracy = accuracy_score(y_test, y_pred)
@@ -48,13 +51,17 @@ def train_model():
         recall = recall_score(y_test, y_pred)
         f1 = f1_score(y_test, y_pred)
         
-        # Log metrics
+        # Log metrics with explicit names
         mlflow.log_metric("accuracy", accuracy)
         mlflow.log_metric("precision", precision)
         mlflow.log_metric("recall", recall)
         mlflow.log_metric("f1", f1)
         
-        print(f"Model trained with accuracy: {accuracy:.4f}")
+        # Log feature importance
+        for i, feature in enumerate(X.columns):
+            mlflow.log_metric(f"feature_importance_{feature}", model.feature_importances_[i])
+        
+        print(f"Model trained with accuracy: {accuracy:.4f}, F1: {f1:.4f}")
         
         # Log model - this is the important part
         mlflow.sklearn.log_model(model, "model")
