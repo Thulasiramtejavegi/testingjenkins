@@ -44,7 +44,7 @@ def prepare_data():
 
 if __name__ == "__main__":
     # Set MLflow tracking URI
-    mlflow_tracking_uri = os.environ.get["MLFLOW_TRACKING_URI"]
+    mlflow_tracking_uri = os.environ.get("MLFLOW_TRACKING_URI")
     mlflow.set_tracking_uri(mlflow_tracking_uri)
     
     # Log parameters
