@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Build Docker Images') {
+            steps {
+                sh 'docker-compose build'
+            }
+        }
+        
+        stage('Run Tests') {
+            steps {
+                sh 'docker-compose run training pytest tests/'
+            }
+        }
+        
+        stage('Data Preparation') {
+            steps {
+                sh 'docker-compose run training python -m scripts.data_preparation'
+            }
+        }
+        
+        stage('Model Training') {
+            steps {
+                sh 'docker-compose run training python -m scripts.model_training'
+            }
+        }
+        
+        stage('Model Evaluation') {
+            steps {
+                sh 'docker-compose run training python -m scripts.model_evaluation'
+            }
+        }
+        
+        stage('Model Deployment') {
+            steps {
+                sh 'docker-compose run training python -m scripts.model_deployment'
+            }
+        }
+    }
+    
+    post {
+        always {
+            sh 'docker-compose down'
+        }
+    }
+}

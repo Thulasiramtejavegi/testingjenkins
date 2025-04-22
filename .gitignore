@@ -1,0 +1,16 @@
+# Ignore model outputs
+models/
+
+# Ignore Python virtual environments
+venv/
+jenkinsml/
+
+# Ignore Pycache
+__pycache__/
+*.pyc
+
+# Ignore MLflow artifact locations if applicable
+mlruns/
+
+# Ignore logs or runtime-generated files
+*.log

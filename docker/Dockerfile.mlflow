@@ -1,0 +1,17 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install git for MLflow 
+RUN apt-get update && apt-get install -y git && apt-get clean
+
+# Install MLflow and dependencies
+RUN pip install --no-cache-dir mlflow==2.8.0 psycopg2-binary sqlalchemy alembic matplotlib
+
+# Create directory for MLflow data
+RUN mkdir -p /mlflow/mlruns /mlflow/artifacts
+
+EXPOSE 5000
+
+# We'll override this in docker-compose.yml
+CMD ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000"]
