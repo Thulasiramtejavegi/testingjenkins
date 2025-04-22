@@ -8,7 +8,7 @@ def deploy_model():
     print("Deploying model...")
     
     # Set MLflow tracking URI
-    mlflow_tracking_uri = os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000")
+    mlflow_tracking_uri = os.environ.get("MLFLOW_TRACKING_URI")
     mlflow.set_tracking_uri(mlflow_tracking_uri)
     
     # Get latest model version
