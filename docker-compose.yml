@@ -20,8 +20,9 @@ services:
       dockerfile: docker/Dockerfile.training
     volumes:
       - ./:/app
-      - ~/mlflow:/mlflow  # Add this to ensure access to artifacts
+      - ~/mlflow:/mlflow
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - PYTHONPATH=/app  # Add this line to set the Python path
     depends_on:
       - mlflow
