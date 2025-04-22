@@ -6,12 +6,11 @@ services:
       context: .
       dockerfile: docker/Dockerfile.mlflow
     ports:
-      - "5000:5000"
+      - "${MLFLOW_PORT:-5000}:5000"  # Use env variable with fallback
     volumes:
       - ~/mlflow:/mlflow
     environment:
       - MLFLOW_TRACKING_URI=http://localhost:5000
-    # Add a custom network
     networks:
       - mlflow-network
 
@@ -23,13 +22,12 @@ services:
       - ./:/app
       - ~/mlflow:/mlflow
     environment:
-      - MLFLOW_TRACKING_URI=http://mlflow:5000  # Use Docker's internal DNS
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
     depends_on:
       - mlflow
     networks:
-      - mlflow-network  # Share the same network
+      - mlflow-network
 
-# Define a custom network
 networks:
   mlflow-network:
     driver: bridge
