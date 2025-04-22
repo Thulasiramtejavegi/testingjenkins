@@ -11,8 +11,9 @@ services:
       - ~/mlflow:/mlflow
     environment:
       - MLFLOW_TRACKING_URI=http://localhost:5000
-      - PYTHONPATH=/app  
-    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri /mlflow/mlruns --default-artifact-root file:///mlflow/artifacts
+    # Add a custom network
+    networks:
+      - mlflow-network
 
   training:
     build:
@@ -22,7 +23,13 @@ services:
       - ./:/app
       - ~/mlflow:/mlflow
     environment:
-      - MLFLOW_TRACKING_URI=http://mlflow:5000
-      - PYTHONPATH=/app  # Add this line to set the Python path
+      - MLFLOW_TRACKING_URI=http://mlflow:5000  # Use Docker's internal DNS
     depends_on:
       - mlflow
+    networks:
+      - mlflow-network  # Share the same network
+
+# Define a custom network
+networks:
+  mlflow-network:
+    driver: bridge
